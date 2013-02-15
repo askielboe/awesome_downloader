@@ -1,4 +1,4 @@
-# coding=<utf-8>
+# coding: utf-8
 import settings as s
 import twill.commands as tc
 
@@ -69,7 +69,7 @@ def getValidFilename(filename):
     return ''.join(c for c in filename if c in valid_chars)
 
 def removeNonUnicodeChars(string):
-    return string.replace('é','e')
+    return string.encode('utf8')
 
 #--------------------------------------------------------------------------------
 # Connect to local database
