@@ -20,6 +20,9 @@ def doLogin():
     tc.submit('0')
 
 def doSearch(movieTitle, movieYear):
+    # Convert non-unicode characters
+    movieTitle = removeNonUnicodeChars(movieTitle)
+    
     # Search
     tc.go('http://awesome-hd.net/torrents.php')
     tc.fv('1','searchstr',movieTitle)
@@ -37,6 +40,9 @@ def doSearch(movieTitle, movieYear):
     return html
 
 def getLink(html, movieTitle, movieYear):
+    # Convert non-unicode characters
+    movieTitle = removeNonUnicodeChars(movieTitle)
+    
     link = ''
     i = 0
     while i < len(html):
@@ -60,6 +66,9 @@ def getValidFilename(filename):
     import string
     valid_chars = "-_.() %s%s" % (string.ascii_letters, string.digits)
     return ''.join(c for c in filename if c in valid_chars)
+
+def removeNonUnicodeChars(string):
+    return string.replace('é','e')
 
 #--------------------------------------------------------------------------------
 # Connect to local database
@@ -94,7 +103,7 @@ for movie in movies:
     if len(link) > 0:
         movie.link = link
         # Make sure we are using only valid chars in the filename
-        torrentName = getValidFilename('.'.join(movie.title.split(' '))+'.('+str(movie.year)+').torrent')
+        torrentName = getValidFilename('.'.join(removeNonUnicodeChars(movie.title).split(' '))+'.('+str(movie.year)+').torrent')
         try:
             tc.go(link)
             tc.save_html(s.torrentPath+torrentName)
