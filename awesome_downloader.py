@@ -95,12 +95,15 @@ for movie in movies:
         movie.link = link
         # Make sure we are using only valid chars in the filename
         torrentName = getValidFilename('.'.join(movie.title.split(' '))+'.('+str(movie.year)+').torrent')
-        tc.go(link)
-        tc.save_html(s.torrentPath+torrentName)
-        movie.downloaded = 1
-        print "======================================================"
-        print "DOWNLOADED TORRENT: "+torrentName
-        print "======================================================"
+        try:
+            tc.go(link)
+            tc.save_html(s.torrentPath+torrentName)
+            movie.downloaded = 1
+            print "======================================================"
+            print "DOWNLOADED TORRENT: "+torrentName
+            print "======================================================"
+        except ValueError:
+            print "ERROR SOMETHING WENT WRONG IN TWILL.."
     else:
         print "NO RESULTS FOR: "+movie.title+' ('+str(movie.year)+')'
     movie.last_searched = timePosix
