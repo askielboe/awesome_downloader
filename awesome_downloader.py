@@ -1,18 +1,22 @@
+import settings as s
 import twill.commands as tc
 
 tc.redirect_output('twill.log')
+
 # # #
 # Functions
 def doLogin():
     # Login
     tc.go('http://awesome-hd.net/login.php')
-    tc.fv("1", "username", "krisse")
-    tc.fv("1", "password", "E7bCUN3geVUy")
+    
     # If we are redirected it means that we are already logged in
     try:
         tc.url('http://awesome-hd.net/login.php')
     except:
         return
+    
+    tc.fv("1", "username", s.username)
+    tc.fv("1", "password", s.password)
     tc.submit('0')
 
 def doSearch(movieTitle, movieYear):
@@ -36,9 +40,7 @@ def getLink(html, movieTitle, movieYear):
     link = ''
     i = 0
     while i < len(html):
-        #print "readin line: ", i
         if 'title=\"View Torrent\">'+movieTitle+'</a>'+' ['+str(movieYear)+']' in html[i]:
-            #print html[i]
             i += 1
             while i < len(html):
                 if '1080p' in html[i] \
@@ -49,31 +51,19 @@ def getLink(html, movieTitle, movieYear):
                     link = 'http://awesome-hd.net/'+html[i-3].lstrip('\t\t\t\t[<a href="').rstrip('" title="Download">DL</a>\n')
                     link = ''.join(link.split('amp;'))
                 if '<td colspan="2">' in html[i]:
-                    print "Next torrent - breaking"
-                    print html[i]
                     i = len(html)
-                #print "readin line: ", i
                 i += 1
         i += 1
     return link
 
+#--------------------------------------------------------------------------------
 # Connect to local database
 #--------------------------------------------------------------------------------
-# Define database
-#--------------------------------------------------------------------------------
-from sqlalchemy import create_engine
-engine = create_engine('sqlite:///movies.db')
-
-#--------------------------------------------------------------------------------
-# Create a session to start talking to the database
-#--------------------------------------------------------------------------------
-from sqlalchemy.orm import sessionmaker
-# Since the engine is already created we can bind to it immediately
-Session = sessionmaker(bind=engine)
-session = Session()
+from database_operations import create_session
+session = create_session()
 
 from Movie import Movie
-movies = session.query(Movie).limit(10).all()
+movies = session.query(Movie).limit(25).all()
 
 #--------------------------------------------------------------------------------
 # Login to Awesome-HD and search for movies
@@ -95,9 +85,10 @@ for movie in movies:
     link = getLink(html, movie.title, movie.year)
     if len(link) > 0:
         movie.link = link
+        torrentName = '.'.join(movie.title.split(' '))+'.('+str(movie.year)+').torrent'
         tc.go(link)
-        tc.save_html('torrents/'+movie.title+'.'+str(movie.year)+'.torrent')
-        print "Downloaded torrent: "+movie.title+'.'+str(movie.year)+'.torrent'
+        tc.save_html('torrents/'+torrentName)
+        print "Downloaded torrent: "+torrentName
     else:
         print "No torrents found for "+movie.title+' ('+str(movie.year)+')'
     movie.last_searched = timePosix
