@@ -63,7 +63,7 @@ from database_operations import create_session
 session = create_session()
 
 from Movie import Movie
-movies = session.query(Movie).limit(25).all()
+movies = session.query(Movie).limit(35).all()
 
 #--------------------------------------------------------------------------------
 # Login to Awesome-HD and search for movies
@@ -78,12 +78,12 @@ timePosix = int(time.mktime(timeNow.timetuple()))
 
 for movie in movies:
     if movie.downloaded:
-        print "Skipping "+movie.title+' ('+str(movie.year)+') - already downloaded!'
+        print "ALREADY DOWNLOADED: "+movie.title+' ('+str(movie.year)+') - skipping..'
         continue
     elif movie.last_searched+86400 > timePosix:
-        print "Skipping "+movie.title+' ('+str(movie.year)+') - searched for recently!'
+        print "SEARCHED RECENTLY: "+movie.title+' ('+str(movie.year)+') - skipping..'
         continue
-    print "Searching for "+movie.title+' ('+str(movie.year)+')'
+    print "---> SEARCHING FOR: "+movie.title+' ('+str(movie.year)+')'
     html = doSearch(movie.title, movie.year)
     link = getLink(html, movie.title, movie.year)
     if len(link) > 0:
@@ -92,9 +92,11 @@ for movie in movies:
         tc.go(link)
         tc.save_html(s.torrentPath+torrentName)
         movie.downloaded = 1
-        print "Downloaded torrent: "+torrentName
+        print "======================================================"
+        print "DOWNLOADED TORRENT: "+torrentName
+        print "======================================================"
     else:
-        print "No torrents found for "+movie.title+' ('+str(movie.year)+')'
+        print "NO RESULTS FOR: "+movie.title+' ('+str(movie.year)+')'
     movie.last_searched = timePosix
     session.add(movie)
     session.commit()
