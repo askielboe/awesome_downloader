@@ -7,6 +7,11 @@ def doLogin():
     tc.go('http://awesome-hd.net/login.php')
     tc.fv("1", "username", "krisse")
     tc.fv("1", "password", "E7bCUN3geVUy")
+    # If we are redirected it means that we are already logged in
+    try:
+        tc.url('http://awesome-hd.net/login.php')
+    except:
+        return
     tc.submit('0')
 
 def doSearch(movieTitle, movieYear):
@@ -73,7 +78,7 @@ movies = session.query(Movie).limit(10).all()
 # Login to Awesome-HD and search for movies
 #--------------------------------------------------------------------------------
 
-#doLogin()
+doLogin()
 
 # Get current date and time in POSIX
 import time,datetime
