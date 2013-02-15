@@ -56,6 +56,11 @@ def getLink(html, movieTitle, movieYear):
         i += 1
     return link
 
+def getValidFilename(filename):
+    import string
+    valid_chars = "-_.() %s%s" % (string.ascii_letters, string.digits)
+    return ''.join(c for c in filename if c in valid_chars)
+
 #--------------------------------------------------------------------------------
 # Connect to local database
 #--------------------------------------------------------------------------------
@@ -63,7 +68,7 @@ from database_operations import create_session
 session = create_session()
 
 from Movie import Movie
-movies = session.query(Movie).limit(35).all()
+movies = session.query(Movie).all()
 
 #--------------------------------------------------------------------------------
 # Login to Awesome-HD and search for movies
@@ -88,7 +93,8 @@ for movie in movies:
     link = getLink(html, movie.title, movie.year)
     if len(link) > 0:
         movie.link = link
-        torrentName = '.'.join(movie.title.split(' '))+'.('+str(movie.year)+').torrent'
+        # Make sure we are using only valid chars in the filename
+        torrentName = getValidFilename('.'.join(movie.title.split(' '))+'.('+str(movie.year)+').torrent')
         tc.go(link)
         tc.save_html(s.torrentPath+torrentName)
         movie.downloaded = 1
