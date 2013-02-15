@@ -87,7 +87,7 @@ for movie in movies:
         movie.link = link
         torrentName = '.'.join(movie.title.split(' '))+'.('+str(movie.year)+').torrent'
         tc.go(link)
-        tc.save_html(torrentPath+torrentName)
+        tc.save_html(s.torrentPath+torrentName)
         print "Downloaded torrent: "+torrentName
     else:
         print "No torrents found for "+movie.title+' ('+str(movie.year)+')'
