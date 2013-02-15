@@ -5,7 +5,8 @@ from Movie import Movie
 # Download watchlist
 def getMoviesFromWatchlist(url):
     import urllib2
-    hdr = {'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'}
+    hdr = {'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+           'User-Agent': 'Mozilla/5.0'}
     req = urllib2.Request(url, headers=hdr)
     watchlist = urllib2.urlopen(req)
     output = open('imdb_watchlist.xml','wb')
