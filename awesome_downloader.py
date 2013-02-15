@@ -77,8 +77,11 @@ timeNow = datetime.datetime.now()
 timePosix = int(time.mktime(timeNow.timetuple()))
 
 for movie in movies:
-    if movie.downloaded or movie.last_searched+86400 > timePosix:
-        print "Skipping "+movie.title+' ('+str(movie.year)+') - movie searched for recently!'
+    if movie.downloaded:
+        print "Skipping "+movie.title+' ('+str(movie.year)+') - already downloaded!'
+        continue
+    elif movie.last_searched+86400 > timePosix:
+        print "Skipping "+movie.title+' ('+str(movie.year)+') - searched for recently!'
         continue
     print "Searching for "+movie.title+' ('+str(movie.year)+')'
     html = doSearch(movie.title, movie.year)
