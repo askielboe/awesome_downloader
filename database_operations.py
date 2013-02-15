@@ -14,7 +14,7 @@ def create_session():
     # Define database
     #--------------------------------------------------------------------------------
     from sqlalchemy import create_engine
-    engine = create_engine('sqlite:///movies.db')
+    engine = create_engine('sqlite://'+dbPath)
     
     #--------------------------------------------------------------------------------
     # Create a session to start talking to the database
