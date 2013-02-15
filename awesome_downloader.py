@@ -1,3 +1,4 @@
+# coding=<utf-8>
 import settings as s
 import twill.commands as tc
 
