@@ -1,0 +1,6 @@
+*.torrent
+*.pyc
+*.txt
+*.xml
+*.php
+*.db
