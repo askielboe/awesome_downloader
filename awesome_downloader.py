@@ -1,5 +1,6 @@
 import twill.commands as tc
 
+tc.redirect_output('twill.log')
 # # #
 # Functions
 def doLogin():
