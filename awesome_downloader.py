@@ -95,7 +95,7 @@ def awesomeDownloader():
     nRecent = session.query(Movie).filter(Movie.last_searched+86400 > timePosix).count()
     
     # Get movies we need to search for
-    movies = session.query(Movie).filter(Movie.downloaded == 0).filter(Movie.last_searched+86400 < timePosix).limit(2).all()
+    movies = session.query(Movie).filter(Movie.downloaded == 0).filter(Movie.last_searched+86400 < timePosix).limit(5).all()
     
     nSnatched = 0
     if len(movies) > 0:
