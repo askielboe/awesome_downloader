@@ -73,6 +73,13 @@ def removeNonUnicodeChars(string):
     return string.encode('utf8')
 
 def awesomeDownloader():
+    # Get current date and time
+    import time,datetime
+    timeNow = datetime.datetime.now()
+    timePosix = int(time.mktime(timeNow.timetuple()))
+    
+    print "<--------------- Running Downloader ----------------->"
+    print "Time: ",timeNow.strftime('%d/%m/%Y %H:%M')
     #--------------------------------------------------------------------------------
     # Connect to local database
     #--------------------------------------------------------------------------------
@@ -82,10 +89,6 @@ def awesomeDownloader():
     #--------------------------------------------------------------------------------
     # Check if we need to search for movies
     #--------------------------------------------------------------------------------
-    # Get current date and time in POSIX
-    import time,datetime
-    timeNow = datetime.datetime.now()
-    timePosix = int(time.mktime(timeNow.timetuple()))
     
     from Movie import Movie
     nDownloaded = session.query(Movie).filter(Movie.downloaded == 1).count()
@@ -134,4 +137,4 @@ def awesomeDownloader():
     print "No. movies recently searched: ", nRecent
     print "No. movies searched for: ", len(movies)
     print "No. movies snatched: ", nSnatched
-
+    print "<---------------------------------------------------->"
