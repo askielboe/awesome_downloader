@@ -94,6 +94,7 @@ def awesomeDownloader():
     # Get movies we need to search for
     movies = session.query(Movie).filter(Movie.downloaded == 0).filter(Movie.last_searched+86400 < timePosix).limit(2).all()
     
+    nSnatched = 0
     if len(movies) > 0:
         #--------------------------------------------------------------------------------
         # Login to Awesome-HD and search for movies
@@ -101,7 +102,6 @@ def awesomeDownloader():
         
         doLogin()
         
-        nSnatched = 0
         for movie in movies:
             print "---> SEARCHING FOR: "+movie.title+' ('+str(movie.year)+')'
             html = doSearch(movie.title, movie.year)
