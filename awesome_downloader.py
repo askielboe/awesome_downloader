@@ -93,6 +93,6 @@ for movie in movies:
         print "No torrents found for "+movie.title+' ('+str(movie.year)+')'
     movie.last_searched = timePosix
     session.add(movie)
+    session.commit()
 
 session.commit()
-
