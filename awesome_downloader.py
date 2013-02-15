@@ -1,4 +1,5 @@
 # coding: utf-8
+import random
 import settings as s
 import twill.commands as tc
 
@@ -71,53 +72,66 @@ def getValidFilename(filename):
 def removeNonUnicodeChars(string):
     return string.encode('utf8')
 
-#--------------------------------------------------------------------------------
-# Connect to local database
-#--------------------------------------------------------------------------------
-from database_operations import create_session
-session = create_session()
+def awesomeDownloader():
+    #--------------------------------------------------------------------------------
+    # Connect to local database
+    #--------------------------------------------------------------------------------
+    from database_operations import create_session
+    session = create_session()
+    
+    #--------------------------------------------------------------------------------
+    # Check if we need to search for movies
+    #--------------------------------------------------------------------------------
+    # Get current date and time in POSIX
+    import time,datetime
+    timeNow = datetime.datetime.now()
+    timePosix = int(time.mktime(timeNow.timetuple()))
+    
+    from Movie import Movie
+    nDownloaded = session.query(Movie).filter(Movie.downloaded == 1).count()
+    nRecent = session.query(Movie).filter(Movie.last_searched+86400 > timePosix).count()
+    
+    # Get movies we need to search for
+    movies = session.query(Movie).filter(Movie.downloaded == 0).filter(Movie.last_searched+86400 < timePosix).limit(2).all()
+    
+    if len(movies) > 0:
+        #--------------------------------------------------------------------------------
+        # Login to Awesome-HD and search for movies
+        #--------------------------------------------------------------------------------
+        
+        doLogin()
+        
+        nSnatched = 0
+        for movie in movies:
+            print "---> SEARCHING FOR: "+movie.title+' ('+str(movie.year)+')'
+            html = doSearch(movie.title, movie.year)
+            link = getLink(html, movie.title, movie.year)
+            if len(link) > 0:
+                movie.link = link
+                # Make sure we are using only valid chars in the filename
+                torrentName = getValidFilename('.'.join(removeNonUnicodeChars(movie.title).split(' '))+'.('+str(movie.year)+').torrent')
+                try:
+                    tc.go(link)
+                    tc.save_html(s.torrentPath+torrentName)
+                    movie.downloaded = 1
+                    print "======================================================"
+                    print "DOWNLOADED TORRENT: "+torrentName
+                    print "======================================================"
+                    nSnatched += 1
+                except ValueError:
+                    print "ERROR: Something went wrong in twill.."
+            else:
+                print "NO RESULTS FOR: "+movie.title+' ('+str(movie.year)+')'
+            # Log time of search and add random interval +/- 2 hours to spread out searches
+            movie.last_searched = timePosix + int(random.uniform(-7200,7200))
+            session.add(movie)
+            session.commit()
+        
+        session.commit()
+    
+    print "======================================================"
+    print "No. movies already downloaded: ", nDownloaded
+    print "No. movies recently searched: ", nRecent
+    print "No. movies searched for: ", len(movies)
+    print "No. movies snatched: ", nSnatched
 
-from Movie import Movie
-movies = session.query(Movie).all()
-
-#--------------------------------------------------------------------------------
-# Login to Awesome-HD and search for movies
-#--------------------------------------------------------------------------------
-
-doLogin()
-
-# Get current date and time in POSIX
-import time,datetime
-timeNow = datetime.datetime.now()
-timePosix = int(time.mktime(timeNow.timetuple()))
-
-for movie in movies:
-    if movie.downloaded:
-        print "ALREADY DOWNLOADED: "+movie.title+' ('+str(movie.year)+') - skipping..'
-        continue
-    elif movie.last_searched+86400 > timePosix:
-        print "SEARCHED RECENTLY: "+movie.title+' ('+str(movie.year)+') - skipping..'
-        continue
-    print "---> SEARCHING FOR: "+movie.title+' ('+str(movie.year)+')'
-    html = doSearch(movie.title, movie.year)
-    link = getLink(html, movie.title, movie.year)
-    if len(link) > 0:
-        movie.link = link
-        # Make sure we are using only valid chars in the filename
-        torrentName = getValidFilename('.'.join(removeNonUnicodeChars(movie.title).split(' '))+'.('+str(movie.year)+').torrent')
-        try:
-            tc.go(link)
-            tc.save_html(s.torrentPath+torrentName)
-            movie.downloaded = 1
-            print "======================================================"
-            print "DOWNLOADED TORRENT: "+torrentName
-            print "======================================================"
-        except ValueError:
-            print "ERROR SOMETHING WENT WRONG IN TWILL.."
-    else:
-        print "NO RESULTS FOR: "+movie.title+' ('+str(movie.year)+')'
-    movie.last_searched = timePosix
-    session.add(movie)
-    session.commit()
-
-session.commit()

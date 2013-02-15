@@ -21,7 +21,8 @@ def getMoviesFromWatchlist(url):
     
     return movies
 
-def addMoviesToDatabase(movies):
+def addMoviesToDatabase(session, movies):
+    nAdded = 0
     for movie in movies:
         name = movie[1].text
         movieTitle = re.sub(r' \([1-9].*\)','', name)
@@ -38,16 +39,25 @@ def addMoviesToDatabase(movies):
             newMovie.last_searched = 0
             newMovie.downloaded = 0
             session.add(newMovie)
+            nAdded += 1
     
     session.commit()
+    return nAdded
 
-#--------------------------------------------------------------------------------
-# Connect to local database
-#--------------------------------------------------------------------------------
-from database_operations import create_session
-session = create_session()
+def imdbParse():
+    #--------------------------------------------------------------------------------
+    # Connect to local database
+    #--------------------------------------------------------------------------------
+    from database_operations import create_session
+    session = create_session()
+    
+    nAdded = 0
+    for watchlist in s.imdb_watchlists:
+        movies = getMoviesFromWatchlist(watchlist)
+        nAdded += addMoviesToDatabase(session, movies)
+    
+    print "Number of movies added from watchlists: ",nAdded
 
-for watchlist in s.imdb_watchlists:
-    movies = getMoviesFromWatchlist(watchlist)
-    addMoviesToDatabase(movies)
+if __name__ == '__main__':
+    imdbParse()
 
