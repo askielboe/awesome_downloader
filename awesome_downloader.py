@@ -2,6 +2,7 @@
 import random
 import settings as s
 import twill.commands as tc
+from pushover import pushover
 
 tc.redirect_output('twill.log')
 
@@ -120,6 +121,7 @@ def awesomeDownloader():
                     print "======================================================"
                     print "DOWNLOADED TORRENT: "+torrentName
                     print "======================================================"
+                    pushover("Snatched", movie.title+' ('+str(movie.year)+')')
                     nSnatched += 1
                 except ValueError:
                     print "ERROR: Something went wrong in twill.."
