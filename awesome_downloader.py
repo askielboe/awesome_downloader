@@ -127,8 +127,13 @@ def awesomeDownloader():
                     print "ERROR: Something went wrong in twill.."
             else:
                 print "NO RESULTS FOR: "+movie.title.encode('utf8')+' ('+str(movie.year)+')'
+            
             # Log time of search and add random interval +/- 2 hours to spread out searches
-            movie.last_searched = timePosix + abs(movie.year - timeNow.year)*86400 + int(random.uniform(-7200,7200))
+            try:
+                movie.last_searched = timePosix + abs(movie.year - timeNow.year)*86400 + int(random.uniform(-7200,7200))
+            except TypeError:
+                movie.last_searched = timePosix + 30*86400 + int(random.uniform(-7200,7200))
+            
             session.add(movie)
             session.commit()
         
