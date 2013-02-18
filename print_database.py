@@ -15,5 +15,4 @@ movies = session.query(Movie).order_by(Movie.title).all()
 #--------------------------------------------------------------------------------
 print "<--- Movies --->"
 for movie in movies:
-    print movie.title, ' (', movie.year, ')\t\t\t', movie.imdbId, ' ', movie.last_searched, ' ', movie.downloaded
-
+    print movie.title+' ('+movie.year+')'+' '*(50-len(movie.title))+movie.imdbId+' ', movie.last_searched, ' ', movie.downloaded
