@@ -107,7 +107,7 @@ def awesomeDownloader():
         doLogin()
         
         for movie in movies:
-            print "---> SEARCHING FOR: "+movie.title+' ('+str(movie.year)+')'
+            print "---> SEARCHING FOR: "+movie.title.encode('utf8')+' ('+str(movie.year)+')'
             html = doSearch(movie.title, movie.year)
             link = getLink(html, movie.title, movie.year)
             if len(link) > 0:
@@ -126,9 +126,9 @@ def awesomeDownloader():
                 except ValueError:
                     print "ERROR: Something went wrong in twill.."
             else:
-                print "NO RESULTS FOR: "+movie.title+' ('+str(movie.year)+')'
+                print "NO RESULTS FOR: "+movie.title.encode('utf8')+' ('+str(movie.year)+')'
             # Log time of search and add random interval +/- 2 hours to spread out searches
-            movie.last_searched = timePosix + int(random.uniform(-7200,7200))
+            movie.last_searched = timePosix + abs(movie.year - timeNow.year)*86400 + int(random.uniform(-7200,7200))
             session.add(movie)
             session.commit()
         
