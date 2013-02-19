@@ -21,7 +21,7 @@ timePosix = int(time.mktime(timeNow.timetuple()))
 print "<--- Movies --->"
 for movie in movies:
     
-    hoursToNextSearch = int((movie.last_searched - timePosix)/3600.0)
+    hoursToNextSearch = int((movie.last_searched+86400 - timePosix)/3600.0)
     
     if movie.last_searched == 0:
         string = movie.title+' ('+str(movie.year)+')'+' '*(50-len(movie.title))+movie.imdbId+' '+str(movie.last_searched)+'\t\t'+'\t'+str(movie.downloaded)
