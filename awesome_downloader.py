@@ -17,6 +17,9 @@ def doLogin():
         tc.url('http://awesome-hd.net/login.php')
     except:
         return
+        raise Exception("Can't login!")
+        import traceback
+        traceback.print_exc()
     
     tc.fv("1", "username", s.username)
     tc.fv("1", "password", s.password)
