@@ -10,13 +10,12 @@ tc.redirect_output('twill.log')
 # Functions
 def doLogin():
     # Login
-    tc.go('http://awesome-hd.net/login.php')
+    tc.go('https://awesome-hd.net/login.php')
     
     # If we are redirected it means that we are already logged in
     try:
-        tc.url('http://awesome-hd.net/login.php')
+        tc.url('https://awesome-hd.net/login.php')
     except:
-        return
         raise Exception("Can't login!")
         import traceback
         traceback.print_exc()
@@ -30,7 +29,7 @@ def doSearch(movieTitle, movieYear):
     movieTitle = removeNonUnicodeChars(movieTitle)
     
     # Search
-    tc.go('http://awesome-hd.net/torrents.php')
+    tc.go('https://awesome-hd.net/torrents.php')
     tc.fv('1','searchstr',movieTitle)
     tc.submit()
     
@@ -60,7 +59,7 @@ def getLink(html, movieTitle, movieYear):
                     and '75% Freeleech' in html[i] \
                     and 'Remux' not in html[i]:
                     
-                    link = 'http://awesome-hd.net/'+html[i-3].lstrip('\t\t\t\t[<a href="').rstrip('" title="Download">DL</a>\n')
+                    link = 'https://awesome-hd.net/'+html[i-3].lstrip('\t\t\t\t[<a href="').rstrip('" title="Download">DL</a>\n')
                     link = ''.join(link.split('amp;'))
                 if '<td colspan="2">' in html[i]:
                     i = len(html)
