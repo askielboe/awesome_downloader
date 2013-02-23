@@ -1,4 +1,5 @@
 # coding: utf-8
+import re
 import random
 import settings as s
 import twill.commands as tc
@@ -51,7 +52,7 @@ def getLink(html, movieTitle, movieYear):
     link = ''
     i = 0
     while i < len(html):
-        if 'title=\"View Torrent\">'+movieTitle+'</a>'+' ['+str(movieYear)+']' in html[i]:
+        if re.match('title\=\"View Torrent\"\>(The )*'+movieTitle+'.*\['+str(movieYear)+'\]',html[i]):
             i += 1
             while i < len(html):
                 if '1080p' in html[i] \
