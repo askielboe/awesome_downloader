@@ -52,6 +52,7 @@ def getLink(html, movieTitle, movieYear):
     link = ''
     i = 0
     while i < len(html):
+        movieTitle = movieTitle.lstrip('The ')
         if re.match('title\=\"View Torrent\"\>(The )*'+movieTitle+'.*\['+str(movieYear)+'\]',html[i]):
             i += 1
             while i < len(html):
