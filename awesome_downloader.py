@@ -49,6 +49,7 @@ def doSearch(movieTitle, movieYear):
 def getLink(html, movieTitle, movieYear):
     # Convert non-unicode characters
     movieTitle = removeNonUnicodeChars(movieTitle)
+    movieTitle = movieTitle.lstrip('The ')
     
     link = ''
     i = 0
@@ -76,7 +77,6 @@ def getValidFilename(filename):
 
 def removeNonUnicodeChars(string):
     string = string.encode('utf8')
-    string = string.lstrip('The ')
     return string
 
 def awesomeDownloader():
