@@ -77,7 +77,9 @@ def getValidFilename(filename):
     return ''.join(c for c in filename if c in valid_chars)
 
 def removeNonUnicodeChars(string):
-    return string.encode('utf8')
+    string = string.encode('utf8')
+    string = string.lstrip('The ')
+    return string
 
 def awesomeDownloader():
     # Get current date and time
