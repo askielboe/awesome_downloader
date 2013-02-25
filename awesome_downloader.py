@@ -52,10 +52,7 @@ def getLink(html, movieTitle, movieYear):
     link = ''
     i = 0
     while i < len(html):
-        movieTitle = movieTitle.lstrip('The ')
-        print movieTitle
-        print html[i]
-        if re.match('title\=\"View Torrent\"\>(The )*'+movieTitle+'.*\['+str(movieYear)+'\]',html[i]):
+        if re.search('title\=\"View Torrent\"\>(The )*'+movieTitle+'.*\['+str(movieYear)+'\]',html[i]):
             i += 1
             while i < len(html):
                 if '1080p' in html[i] \
