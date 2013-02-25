@@ -1,48 +1,36 @@
 # coding: utf-8
 import re
 import random
+import mechanize
 import settings as s
-import twill.commands as tc
 from pushover import pushover
-
-tc.redirect_output('twill.log')
 
 # # #
 # Functions
 def doLogin():
-    # Login
-    tc.go('https://awesome-hd.net/login.php')
+    url = "https://awesome-hd.net/login.php"
+    response = mechanize.urlopen(url)
     
-    # If we are redirected it means that we are already logged in
-    try:
-        tc.url('https://awesome-hd.net/login.php')
-    except:
-        raise Exception("Can't login!")
-        import traceback
-        traceback.print_exc()
+    forms = mechanize.ParseResponse(response, backwards_compat=False)
+    form = forms[0]
+    form["username"] = s.username
+    form["password"] = s.password
     
-    tc.fv("1", "username", s.username)
-    tc.fv("1", "password", s.password)
-    tc.submit('0')
+    mechanize.urlopen(form.click())
 
 def doSearch(movieTitle, movieYear):
     # Convert non-unicode characters
     movieTitle = removeNonUnicodeChars(movieTitle)
-    movieTitle = movieTitle.lstrip('The ')
+    
+    url = "https://awesome-hd.net/torrents.php"
+    response = mechanize.urlopen(url)
     
     # Search
-    tc.go('https://awesome-hd.net/torrents.php')
-    tc.fv('1','searchstr',movieTitle)
-    tc.submit()
+    forms = mechanize.ParseResponse(response, backwards_compat=False)
+    form = forms[0]
+    form["searchstr"] = movieTitle
     
-    # Save html page
-    tc.save_html()
-    
-    # # #
-    # Parse HTML
-    torrents_html = open('torrents.php', 'r')
-    html = torrents_html.readlines()
-    torrents_html.close()
+    html = mechanize.urlopen(form.click()).readlines()
     
     return html
 
@@ -121,8 +109,10 @@ def awesomeDownloader():
                 # Make sure we are using only valid chars in the filename
                 torrentName = getValidFilename('.'.join(removeNonUnicodeChars(movie.title).split(' '))+'.('+str(movie.year)+').torrent')
                 try:
-                    tc.go(link)
-                    tc.save_html(s.torrentPath+torrentName)
+                    filename = s.torrentPath+torrentName
+                    with open(filename, 'w') as torrent_file:
+                        for line in mechanize.urlopen(link).readlines():
+                            torrent_file.write(line)
                     movie.downloaded = 1
                     print "======================================================"
                     print "DOWNLOADED TORRENT: "+torrentName
