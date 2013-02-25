@@ -28,6 +28,7 @@ def doLogin():
 def doSearch(movieTitle, movieYear):
     # Convert non-unicode characters
     movieTitle = removeNonUnicodeChars(movieTitle)
+    movieTitle = movieTitle.lstrip('The ')
     
     # Search
     tc.go('https://awesome-hd.net/torrents.php')
