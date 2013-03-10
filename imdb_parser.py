@@ -32,7 +32,7 @@ def addMoviesToDatabase(session, movies):
         # Check if the movie is already in the database
         q = session.query(Movie).filter(Movie.imdbId == movieImdbId)
         if len(q.all()) == 0:
-            print "Adding "+movieTitle+" to database.."
+            print "Adding "+movieTitle.encode('utf-8')+" to database.."
             # If not add it to the database
             newMovie = Movie(movieTitle, movieYear)
             newMovie.imdbId = movieImdbId
