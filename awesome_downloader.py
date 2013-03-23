@@ -43,7 +43,7 @@ def getLink(html, movieTitle, movieYear):
     try:
         movieYear = int(movieYear)
     except ValueError:
-        raise "WARNING: Movie Year cannot be converted to integer, skipping movie.."
+        print "WARNING: Movie Year cannot be converted to integer, skipping movie.."
         return ''
 
     link = ''
