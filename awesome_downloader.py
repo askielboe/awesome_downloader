@@ -39,6 +39,13 @@ def getLink(html, movieTitle, movieYear):
     movieTitle = removeNonUnicodeChars(movieTitle)
     movieTitle = movieTitle.lstrip('The ')
     
+    # Make sure movie year is an int
+    try:
+        movieYear = int(movieYear)
+    except ValueError:
+        raise "WARNING: Movie Year cannot be converted to integer, skipping movie.."
+        return ''
+
     link = ''
     i = 0
     while i < len(html):
