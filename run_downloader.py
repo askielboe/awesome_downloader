@@ -6,6 +6,13 @@ import sys
 from pushover import pushover
 from settings import torrentPath, minDiskSpace
 
+# Creates a file for flagging low disk space
+try:
+	f = open('.isdiskfull', 'r')
+except IOError:
+	f = open('.isdiskfull', 'w')
+	f.close()
+
 s = os.statvfs(torrentPath)
 spaceLeft = (s.f_bavail * s.f_frsize / 1e9)
 if spaceLeft < minDiskSpace:
