@@ -9,6 +9,8 @@ def getMoviesFromWatchlist(watchlistUrl):
     url = 'https://secure.imdb.com/register-imdb/login'
     browser = mechanize.Browser()
     browser.set_handle_robots(False)
+    browser.addheaders = [('Accept', 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'),
+                          ('User-Agent', 'Mozilla/5.0')]
 
     browser.open(url)
 
