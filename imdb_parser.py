@@ -1,19 +1,32 @@
 import re
-import urllib2
+import mechanize
 import settings as s
 from Movie import Movie
 
 # Download watchlist
-def getMoviesFromWatchlist(url):
-    # Set headers
-    hdr = {'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-           'User-Agent': 'Mozilla/5.0'}
+def getMoviesFromWatchlist(watchlistUrl):
+    # Login to IMDB
+    url = 'https://secure.imdb.com/register-imdb/login'
+    browser = mechanize.Browser()
+    browser.open(url)
 
-    # Download watchlist from IMDB using cookie for Original movie titles
-    opener = urllib2.build_opener()
-    opener.addheaders.append(('Cookie', 'id=BCYuXiiVdBJgg8M80eMlcICM4VGRVgMXxwFo8FyFAfykZKhcPIpYEW4Avk_rqmksEl72AAcRD8E_8Mr0SSl62Z06_jXIjHhob4OtMRltdEvNVFaKhQ-16OZqh8RU5s4pphdFAiWYDBQn6ueRKD3W2sgclFfCw7tJYo0sK7eN3w_a-fOx6TkHsXTq_asId1oWfn33'))
-    f = opener.open(url)
-    html = f.readlines()
+    # Select the login form
+    browser.select_form(nr=1)
+
+    browser["login"] = s.imdbUsername
+    browser["password"] = s.imdbPassword
+
+    browser.new_control("HIDDEN", "action", {})
+    control = browser.form.find_control("action")
+    control.readonly = False
+
+    browser["action"] = "login"
+    browser.method = "POST"
+    browser.action = url
+
+    response = browser.submit()
+
+    html = browser.open(watchlistUrl).readlines()
 
     # Parse movies in CSV watchlist
     movies = []
