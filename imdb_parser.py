@@ -8,6 +8,8 @@ def getMoviesFromWatchlist(watchlistUrl):
     # Login to IMDB
     url = 'https://secure.imdb.com/register-imdb/login'
     browser = mechanize.Browser()
+    browser.set_handle_robots(False)
+
     browser.open(url)
 
     # Select the login form
