@@ -42,6 +42,7 @@ def addMoviesToDatabase(session, movies):
             nAdded += 1
     
     session.commit()
+    session.close()
     return nAdded
 
 def imdbParse():
